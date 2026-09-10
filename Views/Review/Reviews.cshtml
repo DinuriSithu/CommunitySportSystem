@@ -1,0 +1,76 @@
+﻿@model IEnumerable<CommunitySportSystem.Models.Review>
+
+@{
+    ViewBag.Title = "Facility Reviews";
+}
+
+<div class="container">
+
+    <h2>Facility Reviews</h2>
+
+    <p>Read reviews and ratings submitted by community members.</p>
+
+    <hr />
+
+    @if (Model != null && Model.Any())
+    {
+        foreach (var review in Model)
+        {
+            <div class="panel panel-default">
+
+                <div class="panel-heading">
+
+                    <strong>
+                        @review.Facility.FacilityName
+                    </strong>
+
+                    <span class="pull-right">
+                        @review.ReviewDate.ToString("yyyy-MM-dd")
+                    </span>
+
+                </div>
+
+                <div class="panel-body">
+
+                    <p>
+                        <strong>Member:</strong>
+                        @review.Member.FirstName
+                        @review.Member.LastName
+                    </p>
+
+                    <p>
+                        <strong>Rating:</strong>
+                        <span class="stars">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <span class="glyphicon @(i <= review.Rating ? "glyphicon-star" : "glyphicon-star-empty")"></span>
+                            }
+                        </span>
+                        (@review.Rating / 5)
+                    </p>
+
+                    <p>
+                        <strong>Comment:</strong>
+                        @review.Comment
+                    </p>
+
+                </div>
+
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-info">
+            No reviews have been submitted yet.
+        </div>
+    }
+
+    <p>
+        <a href="@Url.Action("Facilities", "Facility")"
+           class="btn btn-primary">
+            View Facilities
+        </a>
+    </p>
+
+</div>

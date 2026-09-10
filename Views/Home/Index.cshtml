@@ -1,0 +1,136 @@
+﻿@{
+    ViewBag.Title = "Home";
+}
+
+<div class="jumbotron text-center">
+
+    <h1>Community Sports Facilities</h1>
+
+    <p class="lead">
+        Find sports facilities, make bookings, share reviews
+        and connect with the local sports community.
+    </p>
+
+    <p>
+        <a href="@Url.Action("Facilities", "Facility")"
+           class="btn btn-primary btn-lg">
+            Find Facilities
+        </a>
+
+        @if (Session["MemberID"] == null)
+        {
+            <a href="@Url.Action("Register", "Account")"
+               class="btn btn-success btn-lg">
+                Become a Member
+            </a>
+        }
+        else
+        {
+            <a href="@Url.Action("MyBookings", "Booking")"
+               class="btn btn-success btn-lg">
+                My Bookings
+            </a>
+        }
+    </p>
+
+</div>
+
+<div class="row">
+
+    <div class="col-md-4">
+
+        <h2>Find Facilities</h2>
+
+        <p>
+            Search for sports facilities by name, location
+            or facility type. View facility information before
+            making a booking.
+        </p>
+
+        <p>
+            <a class="btn btn-default"
+               href="@Url.Action("Facilities", "Facility")">
+                Search Facilities
+            </a>
+        </p>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <h2>Book a Facility</h2>
+
+        <p>
+            Members can choose a sports facility, select a date
+            and time and make a booking through the system.
+        </p>
+
+        @if (Session["MemberID"] == null)
+        {
+            <p>
+                <a class="btn btn-default"
+                   href="@Url.Action("Login", "Account")">
+                    Member Login
+                </a>
+            </p>
+        }
+        else
+        {
+            <p>
+                <a class="btn btn-default"
+                   href="@Url.Action("Facilities", "Facility")">
+                    Book a Facility
+                </a>
+            </p>
+        }
+
+    </div>
+
+    <div class="col-md-4">
+
+        <h2>Community Reviews</h2>
+
+        <p>
+            Read reviews from members and learn more about
+            the quality and suitability of sports facilities.
+        </p>
+
+        <p>
+            <a class="btn btn-default"
+               href="@Url.Action("Reviews", "Review")">
+                View Reviews
+            </a>
+        </p>
+
+    </div>
+
+</div>
+
+<hr />
+
+<div class="text-center">
+
+    <h2>Join the Community</h2>
+
+    <p>
+        Whether looking for a facility or planning regular
+        sports activities, the Community Sports makes
+        finding and booking facilities easier.
+    </p>
+
+    @if (Session["MemberID"] == null)
+    {
+        <a href="@Url.Action("Register", "Account")"
+           class="btn btn-success">
+            Register Now
+        </a>
+    }
+    else
+    {
+        <a href="@Url.Action("Create", "Inquiry")"
+           class="btn btn-info">
+            Contact / Inquiry
+        </a>
+    }
+
+</div>

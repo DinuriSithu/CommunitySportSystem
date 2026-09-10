@@ -1,0 +1,129 @@
+﻿@model CommunitySportSystem.Models.Facility
+@using CommunitySportSystem.Helpers
+
+@{
+    ViewBag.Title = "Facility Details";
+    bool isGuest = Session["MemberID"] == null;
+    double avgRating = ViewBag.AverageRating != null ? (double)ViewBag.AverageRating : 0;
+    int reviewCount = ViewBag.ReviewCount != null ? (int)ViewBag.ReviewCount : 0;
+}
+
+<div class="container">
+
+    <h2>@Model.FacilityName</h2>
+
+    <hr />
+
+    <div class="row">
+
+        <div class="col-md-8">
+
+            <img src="@Url.Content(FacilityImageHelper.GetImageUrl(Model.FacilityName, Model.Facility_Type != null ? Model.Facility_Type.TypeName : null))"
+                 alt="@Model.FacilityName"
+                 class="facility-hero-img" />
+
+            <div class="panel panel-primary">
+
+                <div class="panel-heading">
+                    <h3 class="panel-title">Facility Information</h3>
+                </div>
+
+                <div class="panel-body">
+
+                    <dl class="dl-horizontal">
+
+                        <dt>Facility Name</dt>
+                        <dd>@Model.FacilityName</dd>
+
+                        <dt>Facility Type</dt>
+                        <dd>@Model.Facility_Type.TypeName</dd>
+
+                        <dt>Location</dt>
+                        <dd>@Model.Location</dd>
+
+                        <dt>Description</dt>
+                        <dd>@Model.Description</dd>
+
+                        <dt>Capacity</dt>
+                        <dd>@Model.Capacity</dd>
+
+                        <dt>Rating</dt>
+                        <dd>
+                            @if (reviewCount > 0)
+                            {
+                                <span class="stars">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <span class="glyphicon @(i <= Math.Round(avgRating) ? "glyphicon-star" : "glyphicon-star-empty")"></span>
+                                    }
+                                </span>
+                                <text>(@avgRating.ToString("0.0") from @reviewCount review@(reviewCount == 1 ? "" : "s"))</text>
+                            }
+                            else
+                            {
+                                <span class="text-muted">No reviews yet</span>
+                            }
+                        </dd>
+
+                        <dt>Status</dt>
+                        <dd>
+                            <span class="badge-status @((Model.Status == "Available" || Model.Status == "Active") ? "status-active" : Model.Status.ToLower().Contains("maintenance") ? "status-maintenance" : "status-inactive")">
+                                @Model.Status
+                            </span>
+                        </dd>
+
+                        @if (!isGuest)
+                        {
+                            <dt>Hourly Rate</dt>
+                            <dd>@Model.HourlyRate.ToString("C")</dd>
+                        }
+                        else
+                        {
+                            <dt>Hourly Rate</dt>
+                            <dd class="text-muted">
+                                <span class="glyphicon glyphicon-lock"></span>
+                                <a href="@Url.Action("Login", "Account")">Log in</a> to see the hourly rate.
+                            </dd>
+                        }
+
+                    </dl>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <p>
+
+        <a href="@Url.Action("Facilities", "Facility")"
+           class="btn btn-default">
+            Back to Facilities
+        </a>
+
+        @if (!isGuest)
+        {
+            <a href="@Url.Action("Create", "Booking",
+                 new { facilityID = Model.Facility_ID })"
+               class="btn btn-primary">
+                Book This Facility
+            </a>
+
+            <a href="@Url.Action("Create", "Review",
+                 new { facilityID = Model.Facility_ID })"
+               class="btn btn-success">
+                Submit Review
+            </a>
+        }
+        else
+        {
+            <a href="@Url.Action("Login", "Account")" class="btn btn-primary">
+                Log In to Book
+            </a>
+        }
+
+    </p>
+
+</div>

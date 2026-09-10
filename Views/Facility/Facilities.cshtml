@@ -1,0 +1,234 @@
+﻿@model IEnumerable<CommunitySportSystem.Models.Facility>
+@using CommunitySportSystem.Helpers
+@using System.Collections.Generic
+
+@{
+    ViewBag.Title = "Sports Facilities";
+}
+
+<div class="container">
+
+    <h2>Sports Facilities</h2>
+
+    <p>
+        Search for sports facilities by name or location, or filter facilities by type.
+        @if (Session["MemberID"] == null)
+        {
+            <text>You're browsing as a guest, so results show broad availability only - <a href="@Url.Action("Login", "Account")">log in</a> to search by exact date and time and to book.</text>
+        }
+    </p>
+
+    <hr />
+
+    @{
+        bool isGuest = Session["MemberID"] == null;
+    }
+
+    @using (Html.BeginForm("Facilities", "Facility", FormMethod.Get))
+    {
+        <div class="row">
+
+            <div class="col-md-2">
+                <label>Search</label>
+
+                <input type="text"
+                       name="search"
+                       value="@ViewBag.Search"
+                       class="form-control"
+                       placeholder="Name or location" />
+            </div>
+
+            <div class="col-md-2">
+                <label>Facility Type</label>
+
+                <select name="facilityTypeID" class="form-control">
+
+                    <option value="">All Types</option>
+
+                    @foreach (var type in ViewBag.FacilityTypes)
+                    {
+                        <option value="@type.FacilityTypeID"
+                                selected="@(ViewBag.FacilityTypeID != null && ViewBag.FacilityTypeID == type.FacilityTypeID)">
+                            @type.TypeName
+                        </option>
+                    }
+
+                </select>
+            </div>
+
+            @if (!isGuest)
+            {
+                <div class="col-md-2">
+                    <label>Date</label>
+
+                    <input type="date"
+                           name="bookingDate"
+                           value="@(ViewBag.BookingDate != null ? ((DateTime)ViewBag.BookingDate).ToString("yyyy-MM-dd") : "")"
+                           class="form-control" />
+                </div>
+
+                <div class="col-md-2">
+                    <label>Start Time</label>
+
+                    <input type="time"
+                           name="startTime"
+                           value="@(ViewBag.StartTime != null ? ((TimeSpan)ViewBag.StartTime).ToString(@"hh\:mm") : "")"
+                           class="form-control" />
+                </div>
+
+                <div class="col-md-2">
+                    <label>End Time</label>
+
+                    <input type="time"
+                           name="endTime"
+                           value="@(ViewBag.EndTime != null ? ((TimeSpan)ViewBag.EndTime).ToString(@"hh\:mm") : "")"
+                           class="form-control" />
+                </div>
+            }
+            else
+            {
+                <div class="col-md-6">
+                    <label>&nbsp;</label>
+                    <p class="text-muted" style="margin-top:7px;">
+                        <span class="glyphicon glyphicon-lock"></span>
+                        Date and time search is available only to logged in members only.
+                    </p>
+                </div>
+            }
+
+            <div class="col-md-2">
+
+                <label>&nbsp;</label>
+
+                <br />
+
+                <button type="submit" class="btn btn-primary">
+                    Search
+                </button>
+
+                <a href="@Url.Action("Facilities", "Facility")"
+                   class="btn btn-default">
+                    Clear
+                </a>
+
+            </div>
+
+        </div>
+    }
+
+    <br />
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row">
+
+            @foreach (var facility in Model)
+            {
+                <div class="col-md-4">
+
+                    <div class="panel panel-default">
+
+                        <img src="@Url.Content(FacilityImageHelper.GetImageUrl(facility.FacilityName, facility.Facility_Type != null ? facility.Facility_Type.TypeName : null))"
+                             alt="@facility.FacilityName"
+                             class="facility-card-img" />
+
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                @facility.FacilityName
+                            </h3>
+                        </div>
+
+                        <div class="panel-body">
+
+                            <p>
+                                <strong>Type:</strong>
+                                @facility.Facility_Type.TypeName
+                            </p>
+
+                            <p>
+                                <strong>Location:</strong>
+                                @facility.Location
+                            </p>
+
+                            <p>
+                                <strong>Capacity:</strong>
+                                @facility.Capacity
+                            </p>
+
+                            @{
+                                double avgRating = ViewBag.AverageRatings != null &&
+                                    ((Dictionary<int, double>)ViewBag.AverageRatings).ContainsKey(facility.Facility_ID)
+                                    ? ((Dictionary<int, double>)ViewBag.AverageRatings)[facility.Facility_ID] : 0;
+
+                                int reviewCount = ViewBag.ReviewCounts != null &&
+                                    ((Dictionary<int, int>)ViewBag.ReviewCounts).ContainsKey(facility.Facility_ID)
+                                    ? ((Dictionary<int, int>)ViewBag.ReviewCounts)[facility.Facility_ID] : 0;
+                            }
+
+                            <p>
+                                <strong>Rating:</strong>
+                                @if (reviewCount > 0)
+                                {
+                                    <span class="stars">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            <span class="glyphicon @(i <= Math.Round(avgRating) ? "glyphicon-star" : "glyphicon-star-empty")"></span>
+                                        }
+                                    </span>
+                                    <text>(@avgRating.ToString("0.0") from @reviewCount review@(reviewCount == 1 ? "" : "s"))</text>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No reviews yet</span>
+                                }
+                            </p>
+
+                            <p>
+                                <strong>Status:</strong>
+                                <span class="badge-status @((facility.Status == "Available" || facility.Status == "Active") ? "status-active" : facility.Status.ToLower().Contains("maintenance") ? "status-maintenance" : "status-inactive")">
+                                    @facility.Status
+                                </span>
+                            </p>
+
+                            @if (!isGuest)
+                            {
+                                <p>
+                                    <strong>Hourly Rate:</strong>
+                                    @facility.HourlyRate.ToString("C")
+                                </p>
+                            }
+                            else
+                            {
+                                <p class="text-muted">
+                                    <span class="glyphicon glyphicon-lock"></span>
+                                    <a href="@Url.Action("Login", "Account")">Log in</a> to see the hourly rate.
+                                </p>
+                            }
+
+                            <p>
+                                @facility.Description
+                            </p>
+
+                            <a href="@Url.Action("Details", "Facility",
+                                     new { id = facility.Facility_ID })"
+                               class="btn btn-info">
+                                View Details
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            No facilities found.
+        </div>
+    }
+
+</div>

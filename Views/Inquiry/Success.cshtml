@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "Inquiry Sent";
+}
+
+<div class="container">
+
+    <div class="jumbotron">
+
+        <h2>Inquiry Sent Successfully!</h2>
+
+        <p>
+            Thank you for contacting the Community Sports System.
+            Your inquiry has been received and will be reviewed by
+            the relevant team.
+        </p>
+
+        <p>
+            <a href="@Url.Action("Index", "Home")"
+               class="btn btn-primary">
+                Back to Home
+            </a>
+
+            <a href="@Url.Action("Facilities", "Facility")"
+               class="btn btn-default">
+                View Facilities
+            </a>
+        </p>
+
+    </div>
+
+</div>

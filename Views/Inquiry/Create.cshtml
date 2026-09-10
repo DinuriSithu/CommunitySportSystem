@@ -1,0 +1,172 @@
+﻿@model CommunitySportSystem.ViewModels.InquiryViewModel
+@using System.Collections.Generic
+
+@{
+    ViewBag.Title = "Contact / Inquiry";
+    bool isMember = Session["MemberID"] != null;
+}
+
+<div class="container">
+
+    <h2>Contact / Inquiry</h2>
+
+    <p>
+        Have a question about our sports facilities or services?
+        Send us an inquiry using the form below.
+    </p>
+
+    <hr />
+
+    <div class="row">
+
+        <div class="@(isMember ? "col-md-7" : "col-md-8 col-md-offset-2")">
+
+            <div class="panel panel-primary">
+
+                <div class="panel-heading">
+                    <h3 class="panel-title">Send an Inquiry</h3>
+                </div>
+
+                <div class="panel-body">
+
+                    @using (Html.BeginForm("Create", "Inquiry", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        @Html.ValidationSummary(true, "",
+                            new { @class = "text-danger" })
+
+                        <div class="form-group">
+
+                            @Html.LabelFor(model => model.Name)
+
+                            @Html.TextBoxFor(model => model.Name,
+                                new { @class = "form-control" })
+
+                            @Html.ValidationMessageFor(
+                                model => model.Name,
+                                "",
+                                new { @class = "text-danger" })
+
+                        </div>
+
+                        <div class="form-group">
+
+                            @Html.LabelFor(model => model.Email)
+
+                            @Html.TextBoxFor(model => model.Email,
+                                new
+                                {
+                                    @class = "form-control",
+                                    type = "email"
+                                })
+
+                            @Html.ValidationMessageFor(
+                                model => model.Email,
+                                "",
+                                new { @class = "text-danger" })
+
+                        </div>
+
+                        <div class="form-group">
+
+                            @Html.LabelFor(model => model.Subject)
+
+                            @Html.TextBoxFor(model => model.Subject,
+                                new { @class = "form-control" })
+
+                            @Html.ValidationMessageFor(
+                                model => model.Subject,
+                                "",
+                                new { @class = "text-danger" })
+
+                        </div>
+
+                        <div class="form-group">
+
+                            @Html.LabelFor(model => model.Message)
+
+                            @Html.TextAreaFor(model => model.Message,
+                                new
+                                {
+                                    @class = "form-control",
+                                    rows = "6",
+                                    placeholder = "Write your inquiry here..."
+                                })
+
+                            @Html.ValidationMessageFor(
+                                model => model.Message,
+                                "",
+                                new { @class = "text-danger" })
+
+                        </div>
+
+                        <br />
+
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Send Inquiry
+                        </button>
+
+                        <a href="@Url.Action("Index", "Home")"
+                           class="btn btn-default">
+                            Cancel
+                        </a>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+        @if (isMember)
+        {
+            <div class="col-md-5">
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <span class="glyphicon glyphicon-envelope"></span>
+                        My Inquiries
+                    </div>
+                    <div class="panel-body">
+
+                        @if (ViewBag.MyInquiries != null && ((List<CommunitySportSystem.Models.Inquiry>)ViewBag.MyInquiries).Count > 0)
+                        {
+                            <ul class="list-unstyled">
+                                @foreach (var inq in (List<CommunitySportSystem.Models.Inquiry>)ViewBag.MyInquiries)
+                                {
+                                    <li style="margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #eee;">
+                                        <strong>@inq.Subject</strong>
+                                        <span class="badge-status @(inq.Inq_Status == "Pending" ? "status-pending" : "status-replied")" style="float:right;">
+                                            @inq.Inq_Status
+                                        </span>
+                                        <br />
+                                        <small class="text-muted">@inq.Inq_Date.ToString("dd MMM yyyy")</small>
+                                        <p style="margin-top:6px;">@inq.Message</p>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p class="text-muted">You haven't sent any inquiries yet.</p>
+                        }
+
+                        <p class="text-muted" style="font-size: 0.85em;">
+                            Status updates when our team reviews your inquiry.
+                        </p>
+
+                    </div>
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

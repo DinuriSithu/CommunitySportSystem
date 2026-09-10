@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - CourtConnect</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+                    <span class="glyphicon glyphicon-record"></span>
+                    CourtConnect
+                </a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+
+                    <li>
+                        @Html.ActionLink("Home", "Index", "Home")
+                    </li>
+
+                    <li>
+                        @Html.ActionLink("Facilities", "Facilities", "Facility")
+                    </li>
+
+                    <li>
+                        @Html.ActionLink("Reviews", "Reviews", "Review")
+                    </li>
+
+                    <li>
+                        @Html.ActionLink("Contact / Inquiry", "Create", "Inquiry")
+                    </li>
+
+                    @if (Session["MemberID"] != null)
+                    {
+                        <li>
+                            @Html.ActionLink("My Bookings", "MyBookings", "Booking")
+                        </li>
+                    }
+
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+
+                    @if (Session["MemberID"] != null)
+                    {
+                        <li class="navbar-user-pill">
+                            <span class="user-pill">
+                                <span class="user-avatar">
+                                    @(Session["MemberName"] != null ? Session["MemberName"].ToString().Substring(0, 1).ToUpper() : "M")
+                                </span>
+                                <span class="user-name">@Session["MemberName"]</span>
+                            </span>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("Logout", "Account")" class="navbar-logout-link">
+                                <span class="glyphicon glyphicon-log-out"></span>
+                                Logout
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>
+                            @Html.ActionLink("Login", "Login", "Account")
+                        </li>
+
+                        <li>
+                            @Html.ActionLink("Register", "Register", "Account")
+                        </li>
+                    }
+
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year CourtConnect - Community Sports Facilities Booking</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

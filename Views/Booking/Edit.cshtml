@@ -1,0 +1,165 @@
+﻿@model CommunitySportSystem.ViewModels.BookingViewModel
+@using System.Collections.Generic
+
+@{
+    ViewBag.Title = "Edit Booking";
+}
+
+<div class="container">
+
+    <h2>Edit Booking</h2>
+
+    <hr />
+
+    <div class="row">
+
+        <div class="col-md-8">
+
+            <div class="panel panel-primary">
+
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Booking Information
+                    </h3>
+                </div>
+
+                <div class="panel-body">
+
+                    @using (Html.BeginForm("Edit", "Booking", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        @Html.HiddenFor(model => model.Booking_ID)
+                        @Html.HiddenFor(model => model.Facility_ID)
+
+                        @Html.ValidationSummary(true, "",
+                            new { @class = "text-danger" })
+
+                        <div class="form-group">
+
+                            @Html.LabelFor(model => model.FacilityName)
+
+                            @Html.TextBoxFor(model => model.FacilityName,
+                                new
+                                {
+                                    @class = "form-control",
+                                    @readonly = "readonly"
+                                })
+
+                        </div>
+
+                        <div class="form-group">
+
+                            @Html.LabelFor(model => model.BookingDate)
+
+                            @Html.TextBoxFor(model => model.BookingDate,
+                                "{0:yyyy-MM-dd}",
+                                new
+                                {
+                                    @class = "form-control",
+                                    type = "date"
+                                })
+
+                            @Html.ValidationMessageFor(
+                                model => model.BookingDate,
+                                "",
+                                new { @class = "text-danger" })
+
+                        </div>
+
+                        <div class="form-group">
+
+                            @Html.LabelFor(model => model.StartTime)
+
+                            @Html.TextBoxFor(model => model.StartTime,
+                                "{0:hh\\:mm}",
+                                new
+                                {
+                                    @class = "form-control",
+                                    type = "time",
+                                    required = "required"
+                                })
+
+                            @Html.ValidationMessageFor(
+                                model => model.StartTime,
+                                "",
+                                new { @class = "text-danger" })
+
+                        </div>
+
+                        <div class="form-group">
+
+                            @Html.LabelFor(model => model.EndTime)
+
+                            @Html.TextBoxFor(model => model.EndTime,
+                                "{0:hh\\:mm}",
+                                new
+                                {
+                                    @class = "form-control",
+                                    type = "time",
+                                    required = "required"
+                                })
+
+                            @Html.ValidationMessageFor(
+                                model => model.EndTime,
+                                "",
+                                new { @class = "text-danger" })
+
+                        </div>
+
+                        <br />
+
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Save Changes
+                        </button>
+
+                        <a href="@Url.Action("MyBookings", "Booking")"
+                           class="btn btn-default">
+                            Cancel Editing
+                        </a>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                    Already Booked (this facility)
+                </div>
+                <div class="panel-body">
+                    @if (ViewBag.ExistingBookings != null && ((List<CommunitySportSystem.Models.Booking>)ViewBag.ExistingBookings).Count > 0)
+                    {
+                        <ul class="list-unstyled">
+                            @foreach (var b in (List<CommunitySportSystem.Models.Booking>)ViewBag.ExistingBookings)
+                            {
+                                <li>
+                                    <strong>@b.BookingDate.ToString("dd MMM yyyy")</strong>
+                                    @b.StartTime.ToString(@"hh\:mm") - @b.EndTime.ToString(@"hh\:mm")
+                                </li>
+                            }
+                        </ul>
+                        <p class="text-muted">Your current slot is excluded from this list - pick anything that doesn't clash with the rest.</p>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No other upcoming bookings for this facility.</p>
+                    }
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

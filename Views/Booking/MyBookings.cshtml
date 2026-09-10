@@ -1,0 +1,122 @@
+﻿@model IEnumerable<CommunitySportSystem.Models.Booking>
+
+@{
+    ViewBag.Title = "My Bookings";
+}
+
+<div class="container">
+
+    <h2>My Bookings</h2>
+
+    <p>View your facility bookings below.</p>
+
+    <hr />
+
+    @if (Model != null && Model.Any())
+    {
+        <table class="table table-bordered table-striped">
+
+            <thead>
+                <tr>
+                    <th>Facility</th>
+                    <th>Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @foreach (var booking in Model)
+                {
+                    bool isCancelled = booking.BookingStatus == "Cancelled";
+                    bool isPast = booking.BookingDate < DateTime.Today;
+                    bool canManage = !isCancelled && !isPast;
+
+                    <tr>
+                        <td>
+                            @booking.Facility.FacilityName
+                        </td>
+
+                        <td>
+                            @booking.BookingDate.ToString("yyyy-MM-dd")
+                        </td>
+
+                        <td>
+                            @booking.StartTime.ToString(@"hh\:mm")
+                        </td>
+
+                        <td>
+                            @booking.EndTime.ToString(@"hh\:mm")
+                        </td>
+
+                        <td>
+                            @if (isCancelled)
+                            {
+                                <span class="badge-status status-inactive">Cancelled</span>
+                            }
+                            else if (isPast)
+                            {
+                                <span class="badge-status status-maintenance">Past Booking</span>
+                            }
+                            else
+                            {
+                                <span class="badge-status status-active">@booking.BookingStatus</span>
+                            }
+                        </td>
+
+                        <td>
+                            @if (canManage)
+                            {
+                                <a href="@Url.Action("Edit", "Booking", new { id = booking.Booking_ID })"
+                                   class="btn btn-default btn-xs">
+                                    Edit
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="btn btn-default btn-xs disabled">Edit</span>
+                            }
+
+                            @if (canManage)
+                            {
+                                using (Html.BeginForm("Cancel", "Booking", new { id = booking.Booking_ID }, FormMethod.Post, new { style = "display:inline;" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger btn-xs"
+                                            onclick="return confirm('Cancel this booking?');">
+                                        Cancel
+                                    </button>
+                                }
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-danger btn-xs disabled" disabled="disabled">
+                                    Cancel
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            You do not have any bookings yet.
+        </div>
+    }
+
+    <p>
+        <a href="@Url.Action("Facilities", "Facility")"
+           class="btn btn-primary">
+            Find a Facility
+        </a>
+    </p>
+
+</div>
