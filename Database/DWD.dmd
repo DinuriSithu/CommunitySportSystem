@@ -1,0 +1,8 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<OSDM_Design class="oracle.dbtools.crest.model.design.Design" name="DWD" id="7B237FBD-EC85-DD1B-415D-64B0D8CF3D3C" version="3.5">
+<createdBy>Windows 10 Pro</createdBy>
+<createdTime>2026-08-29 03:53:42 UTC</createdTime>
+<ownerDesignName>DWD</ownerDesignName>
+<capitalNames>false</capitalNames>
+<designId>7B237FBD-EC85-DD1B-415D-64B0D8CF3D3C</designId>
+</OSDM_Design>
